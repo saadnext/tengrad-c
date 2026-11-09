@@ -1,0 +1,70 @@
+name: CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build-and-test:
+    name: Ubuntu (${{ matrix.c }}, ${{ matrix.build_type }}, ASAN=${{ matrix.asan }})
+    runs-on: ubuntu-24.04
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - c: gcc
+            build_type: Debug
+            asan: ON
+          - c: gcc
+            build_type: Release
+            asan: OFF
+          - c: clang
+            build_type: Debug
+            asan: ON
+          - c: clang
+            build_type: Release
+            asan: OFF
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v7
+
+      - name: Install Dependencies (Ninja)
+        run: sudo apt-get update && sudo apt-get install -y ninja-build
+
+      - name: Print Compiler Version
+        run: ${{ matrix.c }} --version
+
+      - name: Configure CMake
+        run: cmake -B build -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} -DCMAKE_C_COMPILER=${{ matrix.c }} -DTENGRAD_SANITIZE=${{ matrix.asan }} -G Ninja
+
+      - name: Build Project
+        run: cmake --build build
+
+      - name: Run Tests
+        run: ctest --test-dir build --output-on-failure
+
+  valgrind:
+    name: Valgrind Memory Check
+    runs-on: ubuntu-24.04
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v7
+
+      - name: Install Dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y valgrind ninja-build
+
+      - name: Configure CMake
+        run: cmake -B build -DCMAKE_BUILD_TYPE=Debug -DTENGRAD_SANITIZE=OFF -G Ninja
+
+      - name: Build Project
+        run: cmake --build build
+
+      - name: Run Tests under Valgrind
+        run: valgrind --error-exitcode=1 --leak-check=full ./build/tests/test_version
