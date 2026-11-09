@@ -2,6 +2,7 @@
 
 ## Current status
 Step 1 (project skeleton) complete. Nothing tensor-related exists yet.
+CI green on first run (commit 2c8f059)
 
 ## Completed steps
 ### Step 1: Skeleton
@@ -38,8 +39,6 @@ Concepts learned:
   (static string, never freed or modified by the caller).
 
 ## Known issues / tech debt
-- CI has never run (nothing pushed yet). `actions/checkout@v7` is
-  unverified. If checkout fails on the first run, check that version.
 - CI does not set `TENGRAD_WERROR=ON`, so warnings do not fail CI.
 - The valgrind job checks nothing yet (0 allocations). It becomes useful
   once tensors allocate.
