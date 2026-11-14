@@ -2,9 +2,9 @@ name: CI
 
 on:
   push:
-    branches: [ "main" ]
+    branches: ["main"]
   pull_request:
-    branches: [ "main" ]
+    branches: ["main"]
 
 jobs:
   build-and-test:
@@ -67,4 +67,6 @@ jobs:
         run: cmake --build build
 
       - name: Run Tests under Valgrind
-        run: valgrind --error-exitcode=1 --leak-check=full ./build/tests/test_version
+        run: |
+          valgrind --error-exitcode=1 --leak-check=full ./build/tests/test_version
+          valgrind --error-exitcode=1 --leak-check=full ./build/tests/test_storage

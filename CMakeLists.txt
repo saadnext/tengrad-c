@@ -9,10 +9,10 @@ add_library(tengrad_sanitizers INTERFACE)
 
 option(TENGRAD_SANITIZE "Enable Address and Undefined Behavior sanitizers" OFF)
 if(TENGRAD_SANITIZE)
-    # 3. Add compiler and linker flags
-    target_compile_options(tengrad_sanitizers INTERFACE -fsanitize=address,undefined -g -O1)
-    target_link_options(tengrad_sanitizers INTERFACE -fsanitize=address,undefined)
-    message(STATUS "Sanitizers are ENABLED")
+  # 3. Add compiler and linker flags
+  target_compile_options(tengrad_sanitizers INTERFACE -fsanitize=address,undefined -g -O1)
+  target_link_options(tengrad_sanitizers INTERFACE -fsanitize=address,undefined)
+  message(STATUS "Sanitizers are ENABLED")
 endif()
 
 set(CMAKE_C_STANDARD 17)
@@ -24,10 +24,10 @@ target_compile_options(tengrad_warnings INTERFACE -Wall -Wextra -Wpedantic -Wcon
 option(TENGRAD_WERROR "Treat compiler warnings as errors" OFF)
 
 if(TENGRAD_WERROR)
-    target_compile_options(tengrad_warnings INTERFACE -Werror)
+  target_compile_options(tengrad_warnings INTERFACE -Werror)
 endif()
 
-add_library(tengrad STATIC src/version.c)
+add_library(tengrad STATIC src/version.c src/storage.c)
 target_include_directories(tengrad PUBLIC include)
 target_link_libraries(tengrad PRIVATE tengrad_warnings tengrad_sanitizers)
 
